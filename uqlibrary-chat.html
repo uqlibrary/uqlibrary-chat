@@ -1,0 +1,95 @@
+<!--
+Element providing the library chat component
+
+##### Example
+
+    <uqlibrary-chat></uqlibrary-chat>
+@element uqlibrary-chat
+@blurb Element providing the library chat
+@status alpha
+@homepage http://uqlibrary.github.io/uqlibrary-chat
+-->
+
+<link rel="import" href="../uqlibrary-elements/0.5.4/lib/vulcanized.html">
+
+
+
+<polymer-element name="uqlibrary-chat" layout center attributes="chatId chatIId chatHash">
+  <template>
+    <link rel="stylesheet" href="../uqlibrary-elements/resources/theme/element.css">
+
+    <uqlibrary-ga id="ga" appName="chat"></uqlibrary-ga>
+    <uqlibrary-api-account id="account"></uqlibrary-api-account>
+    <core-drawer-panel id="drawerPanel" class="drawer" drawerWidth="256px" responsiveWidth="768px">
+      <core-header-panel drawer>
+        <uqlibrary-menu account="{{user}}"></uqlibrary-menu>
+      </core-header-panel>
+
+      <core-header-panel main class="main">
+        <core-toolbar>
+          <paper-icon-button id="toolBarLeftButton" icon="menu" core-drawer-toggle></paper-icon-button>
+          <span flex id="toolbar-page-title">Ask The Library</span>
+
+        </core-toolbar>
+
+        <div id="content">
+          <core-ajax
+            id="ajax"
+            url="{{chatStatusUrl}}"
+            auto
+            method="get"
+            handleAs="json"
+            on-core-response="{{handleChatStatusResponse}}"></core-ajax>
+
+          <div id="library_chat_wrapper">
+            <div flex layout vertical fit>
+              <iframe flex id="iframe_{{chatHash}}"
+                      src="//v2.libanswers.com/chati.php?iid={{chatIId}}&hash={{chatHash}}&online={{chatStatus}}"
+                      frameborder="0"
+                      scrolling="no"
+                ></iframe>
+            </div>
+          </div>
+        </div>
+      </core-header-panel>
+
+    </core-drawer-panel>
+
+  </template>
+
+  <script>
+      (function() {
+        Polymer('uqlibrary-chat', {
+          chatStatus: false,
+
+          publish: {
+            chatId: '',
+            chatIId: '',
+            chatHash: ''
+          },
+          ready: function() {
+            this.chatStatusUrl = '//v2.libanswers.com/chat_client_status.php?id=' + this.chatId;
+            var that = this;
+            this.$.account.addEventListener('uqlibrary-api-account-loaded', function(e) {
+              if (e.detail.hasSession) {
+                that.user = e.detail;
+              }
+            });
+
+            this.$.account.get();
+
+          },
+          handleChatStatusResponse: function(data) {
+            if(data.detail.response.hasOwnProperty('success')
+                && data.detail.response.success == true
+                && data.detail.response.hasOwnProperty('status')) {
+
+              this.chatStatus = data.detail.response.status;
+            }
+
+          }
+      });
+      })();
+  </script>
+
+</polymer-element>

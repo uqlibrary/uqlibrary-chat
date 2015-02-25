@@ -1,0 +1,14 @@
+{
+  "name": "uqlibrary-chat",
+  "version": "0.0.1",
+  "keywords": [
+    "seed",
+    "polymer",
+    "web-components"
+  ],
+  "private": true,
+  "main": "uqlibrary-chat.html",
+  "dependencies": {
+    "uqlibrary-elements": "uqlibrary/uqlibrary-elements#master"
+  }
+}

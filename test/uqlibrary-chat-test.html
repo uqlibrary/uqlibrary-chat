@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=no">
+  <title>uqlibrary-booking</title>
+
+  <script src="../../webcomponentsjs/webcomponents.min.js"></script>
+  <script src="../../web-component-tester/browser.js"></script>
+
+  <link rel="import" href="../uqlibrary-chat.html">
+</head>
+<body>
+
+  <uqlibrary-chat
+    unresolved
+    chatId="1871"
+    chatIId="1193"
+    chatHash="a917355c560adf4b0c802ffe1fdc92f6"
+    ></uqlibrary-chat>
+
+  <script>
+    window.addEventListener('polymer-ready', function() {
+      var chat = document.querySelector('uqlibrary-chat');
+
+      test('can display library chat page', function (done) {
+        setTimeout(function () {
+          //check page title
+          var pageTitle = chat.$['toolbar-page-title'].innerHTML;
+          expect(pageTitle).to.be.equal('Ask The Library');
+
+          var iframe = chat.$['iframe_'+chat.chatHash];
+          expect(iframe).not.to.be.null;
+
+          done();
+
+        }, 6000);
+      });
+      
+    });
+  </script>
+
+</body>
+</html>
