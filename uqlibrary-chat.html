@@ -33,18 +33,11 @@ Element providing the library chat component
         </core-toolbar>
 
         <div id="content">
-          <core-ajax
-            id="ajax"
-            url="{{chatStatusUrl}}"
-            auto
-            method="get"
-            handleAs="json"
-            on-core-response="{{handleChatStatusResponse}}"></core-ajax>
+
 
           <div id="library_chat_wrapper">
             <div flex layout vertical fit class="responsiveCard">
               <iframe flex id="iframe_{{chatHash}}"
-                      src="//v2.libanswers.com/chati.php?iid={{chatIId}}&hash={{chatHash}}&online={{chatStatus}}"
                       frameborder="0"
                       scrolling="no"
                 ></iframe>
@@ -58,17 +51,39 @@ Element providing the library chat component
   </template>
 
   <script>
+
+      function handleChatStatusResponse(data){
+        if(data.hasOwnProperty('success')
+          && data.success == true
+          && data.hasOwnProperty('status')) {
+
+          // Use this because handleChatStatusResponse was bound to use uqlibrary-chat element
+          this.chatStatus = data.status;
+        }
+        // Set iFrame source only when status is fetched
+        this.$['iframe_'+this.chatHash].setAttribute('src', this.chatUrl + "&online=" + this.chatStatus);
+      }
+
       (function() {
         Polymer('uqlibrary-chat', {
           chatStatus: false,
-
+          chatUrl: '',
           publish: {
             chatId: '',
             chatIId: '',
             chatHash: ''
           },
           ready: function() {
-            this.chatStatusUrl = '//v2.libanswers.com/chat_client_status.php?id=' + this.chatId;
+
+            this.chatUrl="//v2.libanswers.com/chati.php?iid=" + this.chatIId + "&hash=" + this.chatHash;
+
+            // Get chat status (cross-domain)
+            window['handleChatStatusResponse'] = handleChatStatusResponse.bind(this);
+            this.script = document.createElement('script');
+            this.script.src = '//v2.libanswers.com/chat_client_status.php?callback=handleChatStatusResponse&id=' + this.chatId;
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(this.script, s);
+
             var that = this;
             this.$.account.addEventListener('uqlibrary-api-account-loaded', function(e) {
               if (e.detail.hasSession) {
@@ -77,15 +92,6 @@ Element providing the library chat component
             });
 
             this.$.account.get();
-
-          },
-          handleChatStatusResponse: function(data) {
-            if(data.detail.response.hasOwnProperty('success')
-                && data.detail.response.success == true
-                && data.detail.response.hasOwnProperty('status')) {
-
-              this.chatStatus = data.detail.response.status;
-            }
 
           }
       });
