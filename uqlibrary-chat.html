@@ -52,18 +52,6 @@ Element providing the library chat component
 
   <script>
 
-      function handleChatStatusResponse(data){
-        if(data.hasOwnProperty('success')
-          && data.success == true
-          && data.hasOwnProperty('status')) {
-
-          // Use this because handleChatStatusResponse was bound to use uqlibrary-chat element
-          this.chatStatus = data.status;
-        }
-        // Set iFrame source only when status is fetched
-        this.$['iframe_'+this.chatHash].setAttribute('src', this.chatUrl + "&online=" + this.chatStatus);
-      }
-
       (function() {
         Polymer('uqlibrary-chat', {
           chatStatus: false,
@@ -76,13 +64,7 @@ Element providing the library chat component
           ready: function() {
 
             this.chatUrl="//v2.libanswers.com/chati.php?iid=" + this.chatIId + "&hash=" + this.chatHash;
-
-            // Get chat status (cross-domain)
-            window['handleChatStatusResponse'] = handleChatStatusResponse.bind(this);
-            this.script = document.createElement('script');
-            this.script.src = '//v2.libanswers.com/chat_client_status.php?callback=handleChatStatusResponse&id=' + this.chatId;
-            var s = document.getElementsByTagName('script')[0];
-            s.parentNode.insertBefore(this.script, s);
+            this.$['iframe_'+this.chatHash].setAttribute('src', this.chatUrl);
 
             var that = this;
             this.$.account.addEventListener('uqlibrary-api-account-loaded', function(e) {
