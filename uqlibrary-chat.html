@@ -13,9 +13,13 @@ Element providing the library chat component
 <link rel="import" href="../uqlibrary-elements/0.5.4/lib/vulcanized.html">
 
 
-
 <polymer-element name="uqlibrary-chat" layout center attributes="chatId chatIId chatHash">
   <template>
+    <style>
+      iframe {
+        height: 250px;
+      }
+    </style>
     <link rel="stylesheet" href="../uqlibrary-elements/resources/theme/element.css">
 
     <uqlibrary-ga id="ga" appName="chat"></uqlibrary-ga>
@@ -33,16 +37,15 @@ Element providing the library chat component
         </core-toolbar>
 
         <div id="content">
-
-
-          <div id="library_chat_wrapper">
-            <div flex layout vertical fit class="responsiveCard">
+            <paper-shadow class="card" z="1">
               <iframe flex id="iframe_{{chatHash}}"
                       frameborder="0"
                       scrolling="no"
-                ></iframe>
-            </div>
-          </div>
+                  ></iframe>
+            </paper-shadow>
+            <paper-shadow class="card" z="0">
+              <uqlibrary-contacts></uqlibrary-contacts>
+            </paper-shadow>
         </div>
       </core-header-panel>
 
@@ -52,32 +55,32 @@ Element providing the library chat component
 
   <script>
 
-      (function() {
-        Polymer('uqlibrary-chat', {
-          chatStatus: false,
-          chatUrl: '',
-          publish: {
-            chatId: '',
-            chatIId: '',
-            chatHash: ''
-          },
-          ready: function() {
+    (function () {
+      Polymer('uqlibrary-chat', {
+        chatStatus: false,
+        chatUrl: '',
+        publish: {
+          chatId: '',
+          chatIId: '',
+          chatHash: ''
+        },
+        ready: function () {
 
-            this.chatUrl="//v2.libanswers.com/chati.php?iid=" + this.chatIId + "&hash=" + this.chatHash;
-            this.$['iframe_'+this.chatHash].setAttribute('src', this.chatUrl);
+          this.chatUrl = "//v2.libanswers.com/chati.php?iid=" + this.chatIId + "&hash=" + this.chatHash;
+          this.$['iframe_' + this.chatHash].setAttribute('src', this.chatUrl);
 
-            var that = this;
-            this.$.account.addEventListener('uqlibrary-api-account-loaded', function(e) {
-              if (e.detail.hasSession) {
-                that.user = e.detail;
-              }
-            });
+          var that = this;
+          this.$.account.addEventListener('uqlibrary-api-account-loaded', function (e) {
+            if (e.detail.hasSession) {
+              that.user = e.detail;
+            }
+          });
 
-            this.$.account.get();
+          this.$.account.get();
 
-          }
+        }
       });
-      })();
+    })();
   </script>
 
 </polymer-element>
