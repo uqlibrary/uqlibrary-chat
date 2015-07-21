@@ -37,14 +37,14 @@ Element providing the library chat component
         </core-toolbar>
 
         <div id="content">
+          <paper-shadow class="card" z="0">
+            <uqlibrary-contacts></uqlibrary-contacts>
+          </paper-shadow>
             <paper-shadow class="card" z="1">
               <iframe flex id="iframe_{{chatHash}}"
                       frameborder="0"
                       scrolling="no"
                   ></iframe>
-            </paper-shadow>
-            <paper-shadow class="card" z="0">
-              <uqlibrary-contacts></uqlibrary-contacts>
             </paper-shadow>
         </div>
       </core-header-panel>
